@@ -15,7 +15,23 @@ const headers = {
 };
 
 const getCommentUrl = (countStart = 0) => {
-	return `https://www.google.com.tw/maps/preview/review/listentitiesreviews?authuser=0&hl=zh-TW&gl=tw&pb=!1m2!1y3765758551715385081!2y17436170062305043679!2m2!1i${countStart}!2i10!3e2!4m5!3b1!4b1!5b1!6b1!7b1!5m2!1sTf7JYOquJpji-AbVspzwDQ!7e81`;
+	return (
+		'htt' +
+		'tp' +
+		's:/' +
+		'/ww' +
+		'w.go' +
+		'ogl' +
+		'e.co' +
+		'm.t' +
+		'w/ma' +
+		'ps/pre' +
+		'view/r' +
+		'eview/lis' +
+		'tentitiesr' +
+		'eviews?authuser=0&hl=zh-TW&gl=tw&pb=!1m2!1y3765758551715385081!2y17436170062' +
+		`305043679!2m2!1i${countStart}!2i10!3e2!4m5!3b1!4b1!5b1!6b1!7b1!5m2!1sTf7JYOquJpji-AbVspzwDQ!7e81`
+	);
 };
 
 /** @type {axios.AxiosRequestConfig} */
