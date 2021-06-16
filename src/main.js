@@ -1,4 +1,10 @@
 const axios = require('axios');
+const {
+	delay,
+	createFileDirectory,
+	writeJsonFile,
+	formatCommentData,
+} = require('./lib');
 
 console.clear();
 
@@ -8,35 +14,51 @@ const headers = {
 	'Content-Type': 'text/plain',
 };
 
-const url1 = 'https://www.google.com.tw/maps/preview/review/listentitiesreviews?authuser=0&hl=zh-TW&gl=tw&pb=!1m2!1y3765758551715385081!2y17436170062305043679!2m2!1i0!2i10!3e1!4m5!3b1!4b1!5b1!6b1!7b1!5m2!1sVtjJYIDWHJq5wAPYlL7oDQ!7e81';
-const url2 = 'https://www.google.com.tw/maps/preview/review/listentitiesreviews?authuser=0&hl=zh-TW&gl=tw&pb=!1m2!1y3765758551715385081!2y17436170062305043679!2m2!1i10!2i10!3e1!4m5!3b1!4b1!5b1!6b1!7b1!5m2!1sVtjJYIDWHJq5wAPYlL7oDQ!7e81';
+const getCommentUrl = (countStart = 0) => {
+	return `https://www.google.com.tw/maps/preview/review/listentitiesreviews?authuser=0&hl=zh-TW&gl=tw&pb=!1m2!1y3765758551715385081!2y17436170062305043679!2m2!1i${countStart}!2i10!3e2!4m5!3b1!4b1!5b1!6b1!7b1!5m2!1sTf7JYOquJpji-AbVspzwDQ!7e81`
+};
 
 /** @type {axios.AxiosRequestConfig} */
 const axiosConfig = {
 	method: 'get',
-	url: url2,
 	headers,
 	responseType: 'text',
 };
 
-const logCommentData = (commentData) => {
-	console.log('------------------------------------')
-	console.log('用戶名稱:', commentData[0][1], '\n');
-	console.log('評論時間:', commentData[1], '\n');
-	console.log(`評論內容:\n${commentData[3]}`, '\n');
-	console.log('評分星數:', commentData[4] + ' 顆星', '\n');
-};
-
-const apiGetTaipeitMcdonaldComments = () => {
-	axios(axiosConfig).then((res) => {
+/**
+ * @param {{fileName: string; url: string;}} options
+ */
+const apiGetTaipeitMcdonaldComments = async (options) => {
+	await axios({ ...axiosConfig, url: options.url }).then((res) => {
 		const resData = res.data.replace(")]}'", '');
 		const dataObj = JSON.parse(resData);
 		const commentDataList = dataObj[2];
 
-		commentDataList.forEach(commentData => {
-			logCommentData(commentData);
-		})
+		const commentList = commentDataList.map((commentData) =>
+			formatCommentData(commentData)
+		);
+
+		writeJsonFile({
+			fileName: options.fileName,
+			data: commentList,
+		});
 	});
 };
 
-apiGetTaipeitMcdonaldComments();
+const loopWithDelay = async () => {
+	createFileDirectory();
+
+	const fileName = 'taipei_mcdonald';
+	let count = 0;
+	for (let i = 0; i < 10; i++) {
+		await apiGetTaipeitMcdonaldComments({
+			fileName: fileName + (i + 1),
+			url: getCommentUrl(count),
+		});
+		count += 10;
+
+		await delay(2123 + Math.floor(Math.random() * 200));
+	}
+};
+
+loopWithDelay();

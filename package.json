@@ -1,10 +1,9 @@
 {
-  "name": "try_google_place_api_info",
+  "name": "try_get_google_map_comments",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "start": "node src/main.js"
+    "start": "rm -rf ./comment_datas && node src/main.js"
   },
   "keywords": [],
   "author": "",
